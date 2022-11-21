@@ -1,0 +1,75 @@
+<?php
+
+$title = $this->translate('Sign In');
+$this->headMeta()->appendName('keywords', 'Login, Sign In, Authenticate');
+$this->headMeta()->appendName('description', 'Login to my account');
+$this->headTitle($this->escapeHtml($title));
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('login'));
+$form->prepare();
+
+?>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 shadow-sm">
+            <h3 class="mb-3 pt-2 text-md-center">
+                <?= $this->escapeHtml($this->translate('Member Login')); ?>
+            </h3>
+
+            <?= $this->form()->openTag($form); ?>
+
+            <span class="form-text text-muted pb-2">
+                <?= sprintf(
+					$this->translate('Don\'t have an account yet? %sJoin here%s.'),
+				    '<a href="'.$this->url('signup').'">', '</a>'
+				);
+				?>
+            </span>
+
+            <!-- add the email input field -->
+			<div class="mb-3">
+                <?= $this->formLabel($form->get('email')); ?>
+				<div class="form-group">
+                   <?= $this->formText($form->get('email')); ?>
+				</div>
+                
+                <div class="text-danger">
+                	<?= $this->formElementErrors($form->get('email')); ?>
+                </div>
+			</div>	
+
+            <!-- add the password input field -->
+			<div class="mb-3">
+                <?= $this->formLabel($form->get('password')); ?>
+				<div class="form-group">
+                   <?= $this->formText($form->get('password')); ?>
+				</div>
+                
+                <div class="text-danger">
+                	<?= $this->formElementErrors($form->get('password')); ?>
+                </div>
+			</div>	
+
+            <!-- check box -->
+            <div class="mb-3">
+                <div class="custom-control cuctom-checkbox">
+                    <?= $this->formCheckbox($form->get('recall')); ?>
+                    <?= $this->formLabel($form->get('recall')); ?>
+                </div>
+            </div>
+
+            <!-- submit button -->
+            <div class="mb-3 float-right">
+                <?= $this->formHidden($form->get('csrf')); ?>
+                <div class="text-danger">
+                    <?= $this->formElementErrors($form->get('csrf')); ?>
+                </div>
+                <?= $this->formSubmit($form->get('account_login')); ?>
+            </div>
+            
+            <?= $this->form()->closeTag(); ?>
+        </div>
+    </div>
+</div>
