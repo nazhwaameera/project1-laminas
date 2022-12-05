@@ -1,0 +1,66 @@
+<?php
+
+$title = $this->translate('Reset Password');
+# meta keywords
+$this->headMeta()->appendName('keywords', 'Reset, Alter, Password');
+# meta description
+$this->headMeta()->appendName('description', 'Reset your password');
+# page title
+$this->headTitle($this->escapeHtml($title));
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('reset', [], true));
+$form->prepare();
+
+?>
+
+<div class="container">
+
+	<div class="row">
+
+		<div class="col-md-5 shadow-sm">
+			<h3 class="mb-3 pt-2 text-md-center">
+				<?= $this->escapeHtml($this->translate('Reset Account Password')); ?>
+			</h3>
+
+			<?= $this->form()->openTag($form); ?>
+
+            <!-- new password field -->
+			<div class="mb-3">
+                <?= $this->formLabel($form->get('new_password')); ?>
+				<div class="form-group">
+                   <?= $this->formPassword($form->get('new_password')); ?>
+				</div>
+                
+                <div class="text-danger">
+                	<?= $this->formElementErrors($form->get('new_password')); ?>
+                </div>
+			</div>	
+
+			<!-- confirm new password field -->
+			<div class="mb-3">
+                <?= $this->formLabel($form->get('confirm_new_password')); ?>
+				<div class="form-group">
+                   <?= $this->formPassword($form->get('confirm_new_password')); ?>
+				</div>
+                
+                <div class="text-danger">
+                	<?= $this->formElementErrors($form->get('confirm_new_password')); ?>
+                </div>
+			</div>	
+
+			<!-- submit and csrf fields -->
+			<div class="mb-3 float-right">
+                <?= $this->formHidden($form->get('csrf')); ?>
+                <div class="text-danger">
+                	<?= $this->formElementErrors($form->get('csrf')); ?>
+                </div>
+				
+                <?= $this->formSubmit($form->get('reset_password')); ?>           
+			</div>	
+
+			<!-- close the form -->
+			<?= $this->form()->closeTag(); ?>
+        </div>
+    </div>
+</div>

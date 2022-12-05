@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Laminas\Mvc\Application;
 use Laminas\Stdlib\ArrayUtils;
 
+defined('DS') || define('DS', DIRECTORY_SEPARATOR);
+defined('DOOR') || define('DOOR', getcwd());
 /**
  * This makes our life easier when dealing with paths. Everything is relative
  * to the application root now.

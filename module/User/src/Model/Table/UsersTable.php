@@ -25,6 +25,25 @@ class UsersTable extends AbstractTableGateway
         $this->initialize();
     }
 
+    public function fetchAccountById(int $userId)
+    {
+        $sqlQuery = $this->sql->select()
+                    ->join('roles', 'roles.role_id=' .$this->table.'.role_id', ['role_id', 'role'])
+                    ->where(['user_id' => $userId]);
+        $sqlStmt = $this->sql->prepareStatementForSqlObject($sqlQuery);
+        $handler = $sqlStmt->execute()->current();
+
+        if(!$handler) {
+            return null;
+        }
+
+        $classMethod = new ClassMethodsHydrator();
+        $entity = new UserEntity();
+        $classMethod->hydrate($handler, $entity);
+
+        return $entity;
+    }
+
     public function fetchAccountByEmail(string $email)
 	{
 		$sqlQuery = $this->sql->select()
@@ -138,6 +157,77 @@ class UsersTable extends AbstractTableGateway
                 ]
             )
         );
+
+        # csrf
+        $inputFilter->add(
+            $factory->createInput(
+                [
+                    'name' => 'csrf',
+                    'required' => true,
+                    'filters' => [
+                        ['name' => Filter\StripTags::class],
+                        ['name' => Filter\StringTrim::class],
+                    ],
+                    'validators' => [
+                        ['name' => Validator\NotEmpty::class],
+                        [
+                            'name' => Validator\Csrf::class,
+                            'options' => [
+                                'messages' => [
+                                    Validator\Csrf::NOT_SAME => 'Oops! Refill the form and try again',
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        return $inputFilter;
+    }
+    public function getForgotFormFilter()
+    {
+        $inputFilter = new InputFilter\InputFilter;
+        $factory = new InputFilter\Factory();
+
+        # filter and validate email
+        $inputFilter->add(
+            $factory->createInput(
+                [
+                    'name' => 'email',
+                    'required' => true,
+                    'filters' => [
+                        ['name' => Filter\StripTags::class],
+                        ['name' => Filter\StringTrim::class],
+                        ['name' => Filter\StringToLower::class],
+                    ],
+                    'validators' => [
+                        ['name' => Validator\NotEmpty::class],
+                        [
+                            'name' => Validator\StringLength::class,
+                            'options' => [
+                                'min' => 6,
+                                'max' => 128,
+                                'messages' => [
+                                    Validator\StringLength::TOO_SHORT => 'Email address must hae at least 6 characters!',
+                                    Validator\StringLength::TOO_LONG => 'Email address must have at most 128 characters!',
+                                ],
+                            ],
+                        ],
+                        ['name' => Validator\EmailAddress::class],
+                        [
+                            'name' => Validator\Db\RecordExists::class,
+                            'options' => [
+                                'table' => $this->table,
+                                'field' => 'email',
+                                'adapter' => $this->adapter,
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
 
         # csrf
         $inputFilter->add(
@@ -395,6 +485,104 @@ class UsersTable extends AbstractTableGateway
         return $inputFilter;
     }
 
+    public function getResetFormFilter()
+    {
+        $inputFilter = new InputFilter\InputFilter();
+        $factory = new InputFilter\Factory();
+
+        # filter and validate new password input field
+        $inputFilter->add(
+            $factory->createInput (
+                [
+                    'name' => 'new_password',
+                    'required' => true,
+                    'filters' => [
+                        ['name' => Filter\StripTags::class],
+                        ['name' => Filter\StringTrim::class],
+                    ],
+                    'validators' => [
+                        ['name' => Validator\NotEmpty::class],
+                        [
+                            'name' => Validator\StringLength::class,
+                            'options' => [
+                                'min' => 8,
+                                'max' => 25,
+                                'messages' => [
+                                    Validator\StringLength::TOO_SHORT => 'New password must have at least 8 characters',
+                                    Validator\StringLength::TOO_LONG => 'New password must have at most 25 characters',
+                                ]
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        # filter and validate confirm_new_password field
+        $inputFilter->add(
+            $factory->createInput (
+                [
+                    'name' => 'confirm_new_password',
+                    'required' => true,
+                    'filters' => [
+                        ['name' => Filter\StripTags::class],
+                        ['name' => Filter\StringTrim::class],
+                    ],
+                    'validators' => [
+                        ['name' => Validator\NotEmpty::class],
+                        [
+                            'name' => Validator\StringLength::class,
+                            'options' => [
+                                'min' => 8,
+                                'max' => 25,
+                                'messages' => [
+                                    Validator\StringLength::TOO_SHORT => 'New password must have at least 8 characters',
+                                    Validator\StringLength::TOO_LONG => 'New password must have at most 25 characters',
+                                ],
+                            ],
+                        ],
+                        [
+                            'name' => Validator\Identical::class,
+                            'options' => [
+                                'token' => 'new_password',
+                                'messages' => [
+                                    Validator\Identical::NOT_SAME => 'Passwords do not match!,'
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        #csrf field
+        $inputFilter->add(
+            $factory->createInput (
+                [
+                    'name' => 'csrf',
+                    'required' => true,
+                    'filters' => [
+                        ['name' => Filter\StripTags::class],
+                        ['name' => Filter\StringTrim::class],
+                    ],
+                    'validators' => [
+                        ['name' => Validator\NotEmpty::class],
+                        [
+                            'name' => Validator\Csrf::class,
+                            'options' => [
+                                'messages' => [
+                                    Validator\Csrf::NOT_SAME => 'Oops! Refill the form.'
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            )
+        );
+
+        return $inputFilter;
+    }
+
     public function saveAccount(array $data)
     {
         $timenow = date('Y-m-d H:i:s');
@@ -409,6 +597,19 @@ class UsersTable extends AbstractTableGateway
         ];
 
         $sqlQuery = $this->sql->insert()->values($values);
+        $sqlStmt = $this->sql->prepareStatementForSqlObject($sqlQuery);
+
+        return $sqlStmt->execute();
+    }
+
+    public function updatePassword(string $password, int $userId)
+    {
+        $values = [
+            'password' => (new Bcrypt())->create($password),
+            'modified' => date('Y-m-d H:i:s')
+        ];
+
+        $sqlQuery = $this->sql->update()->set($values)->where(['user_id' => $userId]);
         $sqlStmt = $this->sql->prepareStatementForSqlObject($sqlQuery);
 
         return $sqlStmt->execute();

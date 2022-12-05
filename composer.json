@@ -34,7 +34,8 @@
         "laminas/laminas-servicemanager": "^3.19",
         "laminas/laminas-crypt": "^3.9",
         "laminas/laminas-filter": "^2.28",
-        "laminas/laminas-hydrator": "^4.8"
+        "laminas/laminas-hydrator": "^4.8",
+        "laminas/laminas-mail": "^2.20"
     },
     "autoload": {
         "psr-4": {

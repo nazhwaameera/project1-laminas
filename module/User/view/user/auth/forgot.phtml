@@ -1,0 +1,59 @@
+<?php
+
+$title = $this->translate('Forgot Password?');
+
+$this->headMeta()->appendName('keywords', 'Lost, Forgot, Password');
+$this->headMeta()->appendName('description', 'I forgot my account password');
+$this->headTitle($this->escapeHtml($title));
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('forgot'));
+$form->prepare();
+
+?>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-5 shadow-sm">
+            <h3 class="mb-3 pt-2 text-md-center">
+                <?= $this->translate($title); ?>
+            </h3>
+
+            <?= $this->form()->openTag($form); ?>
+
+            <span class="fomr-text text-muted pb-2">
+                <?= $this->translate('Provide the email address associated with your account.'); ?>
+            </span>
+
+            <div class="mb-3">
+                <?= $this->formLabel($form->get('email')); ?>
+                <div class="input-group">
+                    <?= $this->formEmail($form->get('email')); ?>
+                </div>
+                <div class="text-danger">
+                    <?= $this->formElementErrors($form->get('email')); ?>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <?= $this->formLabel($form->get('turing')); ?>
+                <div class="input-group">
+                    <?= $this->formCaptcha($form->get('turing')); ?>
+                </div>
+                <div class="text-danger">
+                    <?= $this->formElementErrors($form->get('turing')); ?>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <?= $this->formHidden($form->get('csrf')); ?>
+                <div class="text-danger">
+                    <?= $this->formElementErrors($form->get('csrf')); ?>
+                </div>
+                <?= $this->formSubmit($form->get('forgot_password')); ?>
+            </div>
+
+            <?= $this->form()->closeTag(); ?>
+        </div>
+    </div>
+</div>

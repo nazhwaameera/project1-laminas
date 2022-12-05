@@ -21,7 +21,7 @@
                                 'href' => $this->basePath() . '/img/favicon.ico'
                             ])
             ->prependStylesheet($this->basePath('css/app.css'))
-            ->prependStylesheet($this->basePath('css/style.css'))
+            // ->prependStylesheet($this->basePath('css/style.css'))
             ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
 ?>
 
@@ -29,47 +29,73 @@
         <?= $this->headScript() ?>
     </head>
     <body>
-        <nav class="navbar navbar-expand-md navbar-dark mb-4" role="navigation">
-            <div class="container">
-                <div class="navbar-header">
-                    <button
-                        class="navbar-toggler"
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                    >
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <a class="navbar-brand" href="<?= $this->url('home') ?>">
-                        <img src="<?= $this->basePath('img/laminas-logo.svg') ?>" alt="Laminas">MVC Skeleton
-                    </a>
-                </div>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="<?= $this->url('home') ?>">
-                                Home <span class="sr-only">(current)</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
         <div class="container">
+            <header class="brand-header py-3">
+                <div class="row flex-nowrap justify-content-between alin-itmes-center">
+                    <div class="col-4 pt-1">
+                        <?= date('l, j F, Y'); ?>
+                    </div>
+
+                    <div class="logo col-4 text-center">
+                        <a href="<?= $this->url('home'); ?>">
+                            MyApp
+                        </a>
+                    </div>
+
+                    <div class="col-4 d-flex justify-content-end align-items-center">
+                        <?php if($this->identity()) { ?>
+                            <?php if($this->identity()->role_id == 1): ?>
+                            <a href="#" class="btn btn-sm mr-2">
+                                Admin
+                            </a>
+                            <?php endif; ?>
+                            <a href="<?= $this->url('logout'); ?>" class="btn btn-sm btn-outline-secondary">
+                                Logout
+                            </a>
+                        <?php } else { ?>
+                            <a href="<?= $this->url('login'); ?>" class="btn btn-sm mr-2">
+                                Login
+                            </a>
+                            <a href="<?= $this->url('signup'); ?>" class="btn btn-sm btn-outline-secondary">
+                                Join
+                            </a>
+                        <?php } ?>
+                    </div>
+                </div>
+            </header>
+
+            <div class="appNav py-1 mb-2">
+                <nav class="nav d-flex">
+                    <a href="#" class="pt-2 text-muted mr-2">Home</a>
+                    <a href="#" class="pt-2 text-muted">Members</a>
+                </nav>
+            </div>
+        </div>
+        <main class="container" role="main">
             <?= $this->partial('partial/flash.phtml', $this->flashMessenger()); ?>
     
             <?= $this->content ?>
             <hr>
-            <footer>
-                <p>
-                    &copy; <?= date('Y') ?>
-                    <a href="https://getlaminas.org/">Laminas Project</a> a Series of LF Projects, LLC.
+        </main>
+        <footer class="text-center text-muted">
+            <div class="small">
+                <p class="mb-1">
+                    <?= $this->translate('Copyright &copy; ' . date('Y') . '. All rights reserved.'); ?>
                 </p>
-            </footer>
-        </div>
+                <ul class="list-inline">
+                    <li class="list-inline-item">
+                        <a href="<?= $this->url('help', ['action' => 'privacy']); ?>">Privacy</a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="<?= $this->url('help', ['action' => 'terms']); ?>">Terms</a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="<?= $this->url('help', ['action' => 'contact']); ?>">Contact</a>
+                    </li>
+                </ul>
+                Powered by Laminas MVC
+            </div>
+        </footer>
         <?= $this->inlineScript()
             ->prependFile($this->basePath('js/app.js'))
             ->prependFile($this->basePath('js/bootstrap.min.js'))

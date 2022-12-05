@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace User;
 
 use Laminas\Db\Adapter\Adapter;
+use User\Model\Table\ForgotTable;
 use User\Model\Table\UsersTable;
+use User\Model\Table\RolesTable;
 
 class Module 
 {
@@ -23,7 +25,15 @@ class Module
                 UsersTable::class => function($sm) {
                     $dbAdapter = $sm->get(Adapter::class);
                     return new UsersTable($dbAdapter);
-                }
+                },
+                ForgotTable::class => function($sm) {
+                    $dbAdapter = $sm->get(Adapter::class);
+                    return new ForgotTable($dbAdapter);
+                },
+                RolesTable::class => function($sm) {
+                    $dbAdapter = $sm->get(Adapter::class);
+                    return new RolesTable($dbAdapter);
+                },
             ]
         ];
     }

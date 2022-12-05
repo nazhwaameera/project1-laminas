@@ -5,3 +5,22 @@
 #day {
     margin-left: 3px;
 }
+
+a:hover {
+    text-decoration: none;
+}
+
+.brand-header {
+	line-height: 1;
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.appNav {
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.logo a {
+	font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+	font-size: 200%;
+	color: #ccc;
+}

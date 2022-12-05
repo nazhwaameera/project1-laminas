@@ -43,6 +43,13 @@ $form->prepare();
             <!-- add the password input field -->
 			<div class="mb-3">
                 <?= $this->formLabel($form->get('password')); ?>
+                <span class="float-right">
+                    <?= sprintf(
+                        $this->translate('%sForgot password?%s'), '<a href="'.$this->url('forgot').'">',
+                        '</a>'
+                        ); 
+                    ?>
+                </span>
 				<div class="form-group">
                    <?= $this->formText($form->get('password')); ?>
 				</div>
